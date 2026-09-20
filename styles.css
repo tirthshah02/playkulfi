@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --night: #2B1B2E;
+  --night-soft: #3A2740;
+  --pistachio: #8FAE6E;
+  --marigold: #E8A33D;
+  --cream: #F7F1E8;
+  --cream-dim: #D9CFC0;
+  --max-width: 680px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--cream);
+  font-family: 'Inter', -apple-system, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  line-height: 1.15;
+  margin: 0 0 0.5em 0;
+  color: var(--cream);
+}
+
+a {
+  color: var(--pistachio);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(143, 174, 110, 0.4);
+  transition: border-color 0.15s ease;
+}
+
+a:hover, a:focus-visible {
+  border-color: var(--pistachio);
+}
+
+a:focus-visible {
+  outline: 2px solid var(--marigold);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header */
+header.site {
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(247, 241, 232, 0.1);
+}
+
+header.site .wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wordmark {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cream);
+  border: none;
+}
+
+.wordmark:hover { border: none; }
+
+nav.site a {
+  color: var(--cream-dim);
+  border: none;
+  margin-left: 24px;
+  font-size: 15px;
+}
+
+nav.site a:hover { color: var(--marigold); }
+
+/* Hero */
+.hero {
+  padding: 72px 0 56px;
+}
+
+.hero h1 {
+  font-size: clamp(32px, 5vw, 46px);
+  max-width: 14ch;
+}
+
+.hero p.lede {
+  font-size: 19px;
+  color: var(--cream-dim);
+  max-width: 50ch;
+  margin-top: 16px;
+}
+
+.stick {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--marigold);
+  margin: 0 10px;
+  vertical-align: middle;
+}
+
+/* Post list */
+.post-list {
+  padding: 8px 0 64px;
+}
+
+.post-row {
+  display: block;
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(247, 241, 232, 0.1);
+  border: none;
+}
+
+.post-row:first-child { padding-top: 0; }
+
+.post-row:hover .post-title { color: var(--marigold); }
+
+.post-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  color: var(--cream);
+  display: block;
+  transition: color 0.15s ease;
+}
+
+.post-dek {
+  color: var(--cream-dim);
+  font-size: 15px;
+  margin-top: 6px;
+}
+
+/* Blog post page */
+article {
+  padding: 56px 0 40px;
+}
+
+article .kicker {
+  color: var(--pistachio);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+article h1 {
+  font-size: clamp(28px, 4.5vw, 38px);
+  max-width: 20ch;
+}
+
+article .dek {
+  color: var(--cream-dim);
+  font-size: 18px;
+  margin-top: 12px;
+  max-width: 55ch;
+}
+
+article .body {
+  margin-top: 36px;
+  max-width: 62ch;
+}
+
+article .body p { margin: 0 0 22px 0; }
+
+article .body h2 {
+  font-size: 24px;
+  margin-top: 44px;
+}
+
+article .body ul, article .body ol {
+  padding-left: 22px;
+  margin: 0 0 22px 0;
+}
+
+article .body li { margin-bottom: 8px; }
+
+.callout {
+  background: var(--night-soft);
+  border-left: 3px solid var(--marigold);
+  padding: 18px 22px;
+  border-radius: 4px;
+  margin: 32px 0;
+}
+
+.callout p { margin: 0; }
+
+.callout a { color: var(--marigold); border-color: rgba(232, 163, 61, 0.4); }
+
+/* CTA band */
+.cta-band {
+  background: var(--night-soft);
+  padding: 48px 0;
+  margin-top: 48px;
+}
+
+.cta-band h2 { font-size: 26px; }
+
+.cta-band p { color: var(--cream-dim); max-width: 48ch; }
+
+.btn {
+  display: inline-block;
+  background: var(--pistachio);
+  color: var(--night);
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 18px;
+}
+
+.btn:hover { background: var(--marigold); border: none; }
+
+/* Footer */
+footer.site {
+  padding: 32px 0 48px;
+  color: var(--cream-dim);
+  font-size: 14px;
+}
+
+footer.site a { color: var(--cream-dim); }
+
+@media (max-width: 480px) {
+  .hero { padding: 48px 0 40px; }
+  nav.site a { margin-left: 14px; font-size: 14px; }
+}
