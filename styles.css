@@ -1,240 +1,880 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
+/* ============================================================
+   playkulfi — companion site to Kulfi (kulfi.club)
+   Built on Kulfi's real design tokens.
+
+   THIS IS THE SOURCE FILE. Every page links styles.min.css, not this
+   one — after editing here, regenerate it: python3 scripts/minify-css.py
+
+   Kulfi's own system is dark-mode first (--surface: #0a0a0a), but it
+   ships a documented light palette for in-game screens:
+     --game-surface: #fafafa   --game-text: #0a0a0a   --game-accent: #ff5858
+   This site runs on that light trio.
+
+   Type: Exo 2 — Kulfi's real --font-ui, variable 100..900, Google Fonts.
+   Their display face (Seatren) is licensed and not on any CDN, so headings
+   use heavy Exo 2 with tightened tracking instead.
+   Font loading: the Exo 2 stylesheet is linked from <head> (after the
+   preconnect hints) rather than @import'd here — @import blocks the
+   browser from discovering the font stylesheet until this file is
+   downloaded and parsed, which delays text rendering. See index.html
+   and blogs/*.html <head> for the actual <link rel="stylesheet">.
+   ============================================================ */
 
 :root {
-  --night: #2B1B2E;
-  --night-soft: #3A2740;
-  --pistachio: #8FAE6E;
-  --marigold: #E8A33D;
-  --cream: #F7F1E8;
-  --cream-dim: #D9CFC0;
-  --max-width: 680px;
+  /* ── Cherry Red — verbatim from kulfi.club/design/tokens.css ───────── */
+  --cherry-100: #ff9b9b;
+  --cherry-200: #ff7676;
+  --cherry-300: #ff5858;   /* primary cta / --badge / --game-accent */
+  --cherry-400: #f23a3a;
+  --cherry-500: #d32424;
+  --cherry-600: #ad1818;
+  --cherry-700: #821010;
+  --cherry-1000: #050101;  /* --on-brand: label color on coral fills */
+
+  /* The signature Kulfi gradient */
+  --gradient-cherry: linear-gradient(89deg, #ff6b8a 0%, #ff9b78 100%);
+  --gradient-cherry-soft: linear-gradient(89deg, #ff6b8a33 0%, #ff9b7833 100%);
+
+  /* ── Greys ─────────────────────────────────────────────────────────── */
+  --grey-50:   #fafafa;
+  --grey-100:  #f5f5f5;
+  --grey-200:  #e5e5e5;
+  --grey-300:  #d4d4d4;
+  --grey-400:  #a3a3a3;
+  --grey-500:  #737373;
+  --grey-600:  #525252;
+  --grey-800:  #262626;
+  --grey-900:  #171717;
+  --grey-1000: #0a0a0a;
+
+  /* ── Semantic (light surface) ──────────────────────────────────────── */
+  --surface:   var(--grey-50);
+  --card:      #ffffff;
+  --raised:    var(--grey-100);
+  --border:    var(--grey-200);
+  --text:      var(--grey-1000);
+  --subtext:   var(--grey-600);
+  --muted:     var(--grey-500);
+  --on-brand:  var(--cherry-1000);
+
+  /* Two-step coral: #ff5858 is a FILL color in Kulfi's system, not text.
+     On #fafafa it lands at 2.96:1, so anything small steps down. */
+  --accent-fill:  var(--cherry-300);  /* buttons, cards, graphic accents   */
+  --accent-text:  var(--cherry-500);  /* links & small coral text — 4.97:1 */
+  --accent-hover: var(--cherry-600);  /* hover / pressed      — 6.89:1     */
+
+  /* Kulfi's faint coral wash on body */
+  --bg-tint: rgba(255, 107, 138, 0.04);
+
+  /* ── Type scale ────────────────────────────────────────────────────── */
+  --fs-3xs: 11px;  --fs-2xs: 12px;  --fs-xs: 13px;  --fs-sm: 14px;
+  --fs-md:  16px;  --fs-lg:  18px;  --fs-xl: 20px;  --fs-2xl: 24px;
+  --fs-3xl: 30px;  --fs-4xl: 40px;  --fs-5xl: 56px;
+
+  --lh-tight: 1.1;  --lh-snug: 1.25;  --lh-body: 1.4;  --lh-loose: 1.6;
+
+  --fw-light: 300;  --fw-regular: 400;  --fw-medium: 500;
+  --fw-bold: 700;   --fw-black: 800;
+
+  --font-ui: "Exo 2", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Display = heavy Exo 2, tracked in. Stands in for Seatren. */
+  --font-display: var(--font-ui);
+  --display-tracking: -0.02em;
+
+  /* ── Spacing: Kulfi's 4-unit grid ──────────────────────────────────── */
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;
+  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;  --space-12: 48px;
+  --space-16: 64px; --space-20: 80px;
+
+  /* ── Radii — arcade cards are 24px in their system ─────────────────── */
+  --radius-sm: 4px;   --radius-md: 8px;   --radius-lg: 12px;
+  --radius-xl: 16px;  --radius-card: 24px; --radius-pill: 9999px;
+
+  /* ── Motion ────────────────────────────────────────────────────────── */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Shadows — retuned for a light surface ─────────────────────────── */
+  --shadow-sm: 0 2px 8px rgba(10, 10, 10, 0.06);
+  --shadow-md: 0 8px 24px rgba(10, 10, 10, 0.08);
+  --shadow-lg: 0 20px 48px rgba(10, 10, 10, 0.12);
+  --shadow-cherry-glow: 0 8px 32px rgba(255, 107, 138, 0.32);
+
+  --touch-min: 44px;
+  --wrap: 1080px;
+  --wrap-read: 720px;
 }
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
-  background: var(--night);
-  color: var(--cream);
-  font-family: 'Inter', -apple-system, sans-serif;
-  font-size: 17px;
-  line-height: 1.65;
+  background-color: var(--surface);
+  background-image: linear-gradient(var(--bg-tint), var(--bg-tint));
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-regular);
+  line-height: var(--lh-loose);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3 {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 500;
-  line-height: 1.15;
-  margin: 0 0 0.5em 0;
-  color: var(--cream);
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-black);
+  letter-spacing: var(--display-tracking);
+  line-height: var(--lh-snug);
+  color: var(--text);
+  margin: 0;
+  text-wrap: balance;
 }
+
+p { margin: 0; }
+img { max-width: 100%; display: block; }
 
 a {
-  color: var(--pistachio);
-  text-decoration: none;
-  border-bottom: 1px solid rgba(143, 174, 110, 0.4);
-  transition: border-color 0.15s ease;
+  color: var(--accent-text);
+  text-decoration: underline;
+  text-decoration-color: rgba(211, 36, 36, 0.32);
+  text-underline-offset: 3px;
+  transition: color var(--duration-fast) var(--ease-standard),
+              text-decoration-color var(--duration-fast) var(--ease-standard);
 }
+a:hover { color: var(--accent-hover); text-decoration-color: currentColor; }
 
-a:hover, a:focus-visible {
-  border-color: var(--pistachio);
-}
-
-a:focus-visible {
-  outline: 2px solid var(--marigold);
-  outline-offset: 2px;
-  border-radius: 2px;
+:focus-visible {
+  outline: 3px solid var(--accent-fill);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
 }
 
 .wrap {
-  max-width: var(--max-width);
+  width: 100%;
+  max-width: var(--wrap);
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0 var(--space-6);
 }
+.wrap--read { max-width: var(--wrap-read); }
 
-/* Header */
+/* ═══════════════════════════════════════════════════════════════════════
+   HEADER — text wordmark (Kulfi's logo.png is #f5f5f5, invisible here)
+   ══════════════════════════════════════════════════════════════════════ */
 header.site {
-  padding: 28px 0;
-  border-bottom: 1px solid rgba(247, 241, 232, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: var(--space-4) 0;
+  background: rgba(250, 250, 250, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
 }
 
 header.site .wrap {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
 }
 
 .wordmark {
-  font-family: 'Fraunces', serif;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--cream);
-  border: none;
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  font-weight: var(--fw-black);
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
 }
+.wordmark:hover { color: var(--text); }
 
-.wordmark:hover { border: none; }
+/* the coral dot — carries the accent in the mark */
+.wordmark::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-fill);
+  display: inline-block;
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+.wordmark:hover::after { transform: translateY(-3px) scale(1.15); }
+
+nav.site {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
 
 nav.site a {
-  color: var(--cream-dim);
-  border: none;
-  margin-left: 24px;
-  font-size: 15px;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--subtext);
+  text-decoration: none;
+}
+nav.site a:hover { color: var(--text); }
+
+nav.site a.nav-cta {
+  background: var(--accent-fill);
+  color: var(--on-brand);
+  font-weight: var(--fw-bold);
+  padding: 10px var(--space-5);
+  border-radius: var(--radius-pill);
+  transition: transform var(--duration-fast) var(--ease-spring),
+              box-shadow var(--duration-fast) var(--ease-standard);
+}
+nav.site a.nav-cta:hover {
+  color: var(--on-brand);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-cherry-glow);
 }
 
-nav.site a:hover { color: var(--marigold); }
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO
+   ══════════════════════════════════════════════════════════════════════ */
+.hero { padding: var(--space-20) 0 var(--space-12); }
 
-/* Hero */
-.hero {
-  padding: 72px 0 56px;
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  background: var(--gradient-cherry-soft);
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-5);
 }
 
 .hero h1 {
-  font-size: clamp(32px, 5vw, 46px);
-  max-width: 14ch;
+  font-size: clamp(38px, 7vw, var(--fs-5xl));
+  line-height: var(--lh-tight);
+  max-width: 16ch;
 }
 
-.hero p.lede {
-  font-size: 19px;
-  color: var(--cream-dim);
-  max-width: 50ch;
-  margin-top: 16px;
+/* coral swash on the line that matters */
+.hero h1 em {
+  font-style: normal;
+  background: var(--gradient-cherry);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.stick {
-  display: inline-block;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--marigold);
-  margin: 0 10px;
-  vertical-align: middle;
+.hero .lede {
+  font-size: clamp(var(--fs-lg), 2.2vw, var(--fs-xl));
+  color: var(--subtext);
+  max-width: 52ch;
+  margin-top: var(--space-5);
 }
 
-/* Post list */
-.post-list {
-  padding: 8px 0 64px;
+/* deadpan stat line, echoing kulfi.club's "about 67% more likely" */
+.hero .stat {
+  margin-top: var(--space-6);
+  font-size: var(--fs-sm);
+  color: var(--muted);
+  max-width: 46ch;
+}
+.hero .stat b { color: var(--accent-text); font-weight: var(--fw-bold); }
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
 }
 
-.post-row {
+/* ═══════════════════════════════════════════════════════════════════════
+   BUTTONS
+   ══════════════════════════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--touch-min);
+  padding: var(--space-3) var(--space-8);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-ui);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-spring),
+              box-shadow var(--duration-fast) var(--ease-standard),
+              background var(--duration-fast) var(--ease-standard);
+}
+
+/* black label on coral — 6.4:1, matches Kulfi's --on-brand token */
+.btn--primary { background: var(--accent-fill); color: var(--on-brand); }
+.btn--primary:hover {
+  color: var(--on-brand);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-cherry-glow);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text);
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+.btn--ghost:hover {
+  color: var(--on-brand);
+  background: var(--text);
+  box-shadow: inset 0 0 0 2px var(--text);
+  transform: translateY(-2px);
+}
+
+/* arrow, lifted from their .arcade-cta::after */
+.btn--arrow::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12h14M13 6l6 6-6 6'/></svg>") center/contain no-repeat;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12h14M13 6l6 6-6 6'/></svg>") center/contain no-repeat;
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+.btn--arrow:hover::after { transform: translateX(4px); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   GAME CHIP WALL — static echo of kulfi.club's drifting Game Arcade
+   ══════════════════════════════════════════════════════════════════════ */
+.chip-wall {
+  padding: var(--space-6) 0 var(--space-12);
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.chip-row { overflow: hidden; }
+.chip-row + .chip-row { margin-top: var(--space-3); }
+
+.chip-track {
+  display: flex;
+  gap: var(--space-3);
+  width: max-content;
+  animation: chip-drift 90s linear infinite;
+  will-change: transform;
+}
+.chip-row:nth-child(2) .chip-track {
+  animation-duration: 110s;
+  animation-direction: reverse;
+}
+
+@keyframes chip-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+/* All 26 pills render identically — plain grey outline, non-interactive.
+   These are a library listing, not links, so no color coding by state. */
+.chip {
+  flex: 0 0 auto;
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--subtext);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+  cursor: default;
+  user-select: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   ARCADE GRID — the post list as a cabinet wall
+   ══════════════════════════════════════════════════════════════════════ */
+.arcade { padding: var(--space-8) 0 var(--space-16); }
+
+.section-head { margin-bottom: var(--space-8); }
+
+.section-head h2 {
+  font-size: clamp(var(--fs-2xl), 4vw, var(--fs-4xl));
+  line-height: var(--lh-tight);
+}
+
+.section-head p {
+  color: var(--subtext);
+  margin-top: var(--space-3);
+  max-width: 48ch;
+}
+
+.arcade-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+.arcade-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  text-decoration: none;
+  color: var(--text);
+  overflow: hidden;
+  isolation: isolate;
+  min-height: 260px;
+  transition: transform var(--duration-normal) var(--ease-spring),
+              box-shadow var(--duration-normal) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+
+/* coral cap — the cabinet's marquee light */
+.arcade-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 5px;
+  background: var(--gradient-cherry);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-normal) var(--ease-standard);
+}
+
+.arcade-card:hover,
+.arcade-card:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(255, 88, 88, 0.4);
+  color: var(--text);
+}
+.arcade-card:hover::before,
+.arcade-card:focus-visible::before { transform: scaleX(1); }
+
+/* the big ghosted cabinet number */
+.arcade-card .slot {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-2);
+  z-index: -1;
+  font-family: var(--font-display);
+  font-size: 110px;
+  font-weight: var(--fw-black);
+  line-height: 1;
+  color: var(--grey-100);
+  user-select: none;
+  transition: color var(--duration-normal) var(--ease-standard);
+}
+.arcade-card:hover .slot { color: rgba(255, 107, 138, 0.14); }
+
+.arcade-card .badge {
+  align-self: flex-start;
+  font-size: var(--fs-3xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  background: var(--gradient-cherry-soft);
+  padding: 5px var(--space-3);
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-5);
+}
+
+.arcade-card h3 {
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-snug);
+  margin-bottom: var(--space-3);
+}
+
+.arcade-card .dek {
+  font-size: var(--fs-sm);
+  color: var(--subtext);
+  line-height: var(--lh-body);
+}
+
+.arcade-card .play {
+  margin-top: auto;
+  padding-top: var(--space-5);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-bold);
+  color: var(--accent-text);
+}
+.arcade-card .play::after {
+  content: "";
+  width: 15px;
+  height: 15px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12h14M13 6l6 6-6 6'/></svg>") center/contain no-repeat;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12h14M13 6l6 6-6 6'/></svg>") center/contain no-repeat;
+  transition: transform var(--duration-fast) var(--ease-spring);
+}
+.arcade-card:hover .play::after { transform: translateX(4px); }
+
+/* Two up, with full-width banner cards top and bottom — their Game Arcade
+   alternates a full-bleed row against a row of narrower cabinets. */
+@media (min-width: 860px) {
+  .arcade-grid { grid-template-columns: repeat(2, 1fr); }
+  .arcade-card--wide { grid-column: 1 / -1; min-height: 240px; }
+  .arcade-card--wide h3 { font-size: var(--fs-3xl); max-width: 22ch; }
+  .arcade-card--wide .dek { font-size: var(--fs-md); max-width: 58ch; }
+  .arcade-card--wide .slot { font-size: 150px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CHAT BUBBLES — from kulfi.club's .sp-bubble homepage mockup,
+   re-derived for a light surface. Replaces bordered callout boxes.
+   ══════════════════════════════════════════════════════════════════════ */
+.chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-12) 0;
+}
+
+.bubble {
+  position: relative;
+  max-width: 34rem;
+  padding: var(--space-4) var(--space-5);
+  border-radius: 20px;
+  font-size: var(--fs-md);
+  line-height: var(--lh-body);
+  box-shadow: var(--shadow-sm);
+}
+
+.bubble p { margin: 0; }
+.bubble p + p { margin-top: var(--space-3); }
+
+/* left / "them" — near-black, their .sp-bubble--right treatment */
+.bubble--them {
+  align-self: flex-start;
+  background: var(--grey-1000);
+  color: var(--grey-100);
+  border-bottom-left-radius: var(--radius-sm);
+}
+.bubble--them a { color: var(--cherry-200); text-decoration-color: rgba(255, 118, 118, 0.5); }
+.bubble--them a:hover { color: var(--cherry-100); }
+
+/* right / "you" — coral fill with black label, per --on-brand */
+.bubble--you {
+  align-self: flex-end;
+  background: var(--accent-fill);
+  color: var(--on-brand);
+  border-bottom-right-radius: var(--radius-sm);
+}
+.bubble--you a { color: var(--on-brand); text-decoration-color: rgba(5, 1, 1, 0.45); }
+.bubble--you a:hover { color: var(--on-brand); }
+
+
+.bubble .who {
   display: block;
-  padding: 22px 0;
-  border-bottom: 1px solid rgba(247, 241, 232, 0.1);
-  border: none;
+  font-size: var(--fs-3xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.55;
+  margin-bottom: var(--space-2);
 }
 
-.post-row:first-child { padding-top: 0; }
-
-.post-row:hover .post-title { color: var(--marigold); }
-
-.post-title {
-  font-family: 'Fraunces', serif;
-  font-size: 22px;
-  color: var(--cream);
-  display: block;
-  transition: color 0.15s ease;
+/* single-bubble callout inside articles */
+.callout {
+  margin: var(--space-12) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
+.callout .bubble { max-width: 100%; }
 
-.post-dek {
-  color: var(--cream-dim);
-  font-size: 15px;
-  margin-top: 6px;
-}
-
-/* Blog post page */
-article {
-  padding: 56px 0 40px;
-}
+/* ═══════════════════════════════════════════════════════════════════════
+   ARTICLE
+   ══════════════════════════════════════════════════════════════════════ */
+article { padding: var(--space-16) 0 var(--space-12); }
 
 article .kicker {
-  color: var(--pistachio);
-  font-size: 14px;
-  margin-bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  background: var(--gradient-cherry-soft);
+  padding: 6px var(--space-3);
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-5);
 }
 
 article h1 {
-  font-size: clamp(28px, 4.5vw, 38px);
-  max-width: 20ch;
+  font-size: clamp(32px, 5.5vw, var(--fs-4xl));
+  line-height: var(--lh-tight);
+  max-width: 22ch;
 }
 
 article .dek {
-  color: var(--cream-dim);
-  font-size: 18px;
-  margin-top: 12px;
-  max-width: 55ch;
+  font-size: var(--fs-lg);
+  color: var(--subtext);
+  margin-top: var(--space-4);
+  max-width: 58ch;
 }
 
 article .body {
-  margin-top: 36px;
-  max-width: 62ch;
+  margin-top: var(--space-12);
+  font-size: var(--fs-lg);
+  line-height: var(--lh-loose);
 }
 
-article .body p { margin: 0 0 22px 0; }
+article .body p { margin: 0 0 var(--space-6) 0; }
 
 article .body h2 {
-  font-size: 24px;
-  margin-top: 44px;
+  font-size: var(--fs-2xl);
+  margin: var(--space-12) 0 var(--space-5);
+  scroll-margin-top: 90px;
 }
 
-article .body ul, article .body ol {
-  padding-left: 22px;
-  margin: 0 0 22px 0;
+/* coral tick before each section heading */
+article .body h2::before {
+  content: "";
+  display: block;
+  width: 28px;
+  height: 4px;
+  border-radius: var(--radius-pill);
+  background: var(--gradient-cherry);
+  margin-bottom: var(--space-4);
 }
 
-article .body li { margin-bottom: 8px; }
-
-.callout {
-  background: var(--night-soft);
-  border-left: 3px solid var(--marigold);
-  padding: 18px 22px;
-  border-radius: 4px;
-  margin: 32px 0;
+article .body ul,
+article .body ol {
+  margin: 0 0 var(--space-6) 0;
+  padding: 0;
+  list-style: none;
 }
 
-.callout p { margin: 0; }
+article .body li {
+  position: relative;
+  padding-left: var(--space-6);
+  margin-bottom: var(--space-3);
+}
 
-.callout a { color: var(--marigold); border-color: rgba(232, 163, 61, 0.4); }
+article .body ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-fill);
+}
 
-/* CTA band */
+article .body ol { counter-reset: step; }
+article .body ol > li { counter-increment: step; }
+article .body ol > li::before {
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-bold);
+  color: var(--accent-text);
+}
+
+article .body strong { font-weight: var(--fw-bold); color: var(--text); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   CTA BAND — dark slab, the one place Kulfi's real surface shows through
+   ══════════════════════════════════════════════════════════════════════ */
 .cta-band {
-  background: var(--night-soft);
-  padding: 48px 0;
-  margin-top: 48px;
+  margin: var(--space-16) 0 0;
+  padding: var(--space-16) 0;
+  background: var(--grey-1000);
+  color: var(--grey-100);
+  position: relative;
+  overflow: hidden;
 }
 
-.cta-band h2 { font-size: 26px; }
-
-.cta-band p { color: var(--cream-dim); max-width: 48ch; }
-
-.btn {
-  display: inline-block;
-  background: var(--pistachio);
-  color: var(--night);
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  padding: 12px 24px;
-  border-radius: 6px;
-  border: none;
-  margin-top: 18px;
+.cta-band::before {
+  content: "";
+  position: absolute;
+  inset: auto -10% -60% auto;
+  width: 520px;
+  height: 520px;
+  border-radius: 50%;
+  background: var(--gradient-cherry);
+  opacity: 0.18;
+  filter: blur(60px);
+  pointer-events: none;
 }
 
-.btn:hover { background: var(--marigold); border: none; }
+.cta-band .wrap { position: relative; z-index: 1; }
 
-/* Footer */
+.cta-band h2 {
+  color: var(--grey-100);
+  font-size: clamp(var(--fs-2xl), 4.5vw, var(--fs-4xl));
+  line-height: var(--lh-tight);
+  max-width: 18ch;
+}
+
+.cta-band p {
+  color: var(--grey-400);
+  margin-top: var(--space-4);
+  max-width: 50ch;
+  font-size: var(--fs-lg);
+}
+
+.cta-band .btn { margin-top: var(--space-8); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════════════ */
 footer.site {
-  padding: 32px 0 48px;
-  color: var(--cream-dim);
-  font-size: 14px;
+  padding: var(--space-12) 0;
+  background: var(--grey-1000);
+  color: var(--grey-400);
+  font-size: var(--fs-sm);
+  border-top: 1px solid var(--grey-900);
 }
 
-footer.site a { color: var(--cream-dim); }
+footer.site .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+}
 
-@media (max-width: 480px) {
-  .hero { padding: 48px 0 40px; }
-  nav.site a { margin-left: 14px; font-size: 14px; }
+footer.site a { color: var(--grey-100); text-decoration-color: rgba(245, 245, 245, 0.4); }
+footer.site a:hover { color: var(--cherry-200); }
+
+.footer-about {
+  width: 100%;
+  padding-top: var(--space-6);
+  margin-top: var(--space-6);
+  border-top: 1px solid var(--grey-900);
+  color: var(--grey-500);
+  font-size: var(--fs-xs);
+  line-height: var(--lh-body);
+  max-width: 62ch;
+}
+.footer-about a { color: var(--grey-300); }
+.footer-about a:hover { color: var(--cherry-200); }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   BYLINE — author + date, sits under the dek on every article
+   ══════════════════════════════════════════════════════════════════════ */
+.byline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.byline .byline-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--muted);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RELATED READING — 2+ internal links, closes out the body before the FAQ
+   ══════════════════════════════════════════════════════════════════════ */
+.related-reading {
+  margin: var(--space-12) 0;
+  padding: var(--space-6);
+  background: var(--raised);
+  border-radius: var(--radius-lg);
+}
+.related-reading p.related-label {
+  font-size: var(--fs-2xs);
+  font-weight: var(--fw-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  margin-bottom: var(--space-3);
+}
+.related-reading ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.related-reading li { padding-left: 0; margin: 0; }
+.related-reading li::before { content: none; }
+.related-reading a {
+  font-weight: var(--fw-medium);
+  font-size: var(--fs-md);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FAQ — visible Q&A block that mirrors the FAQPage JSON-LD below it.
+   Answers here must stay word-for-word identical to the schema.
+   ══════════════════════════════════════════════════════════════════════ */
+.faq {
+  margin: var(--space-12) 0;
+}
+.faq h2 { margin-bottom: var(--space-6); }
+.faq-item {
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--border);
+}
+.faq-item:last-child { border-bottom: 1px solid var(--border); }
+.faq-item h3 {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-bold);
+  margin-bottom: var(--space-3);
+  line-height: var(--lh-snug);
+}
+.faq-item p {
+  color: var(--subtext);
+  font-size: var(--fs-md);
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 720px) {
+  .wrap { padding: 0 var(--space-4); }
+  .hero { padding: var(--space-12) 0 var(--space-8); }
+  .arcade { padding: var(--space-4) 0 var(--space-12); }
+  article { padding: var(--space-12) 0 var(--space-8); }
+  article .body { font-size: var(--fs-md); margin-top: var(--space-8); }
+  .cta-band { padding: var(--space-12) 0; }
+  nav.site { gap: var(--space-3); }
+  nav.site a.nav-cta { padding: 9px var(--space-4); }
+  .bubble { max-width: 100%; }
+  .arcade-card { min-height: 0; padding: var(--space-5); }
+  .arcade-card .slot { font-size: 80px; }
+  footer.site .wrap { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 400px) {
+  nav.site a.nav-read { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .chip-track { animation: none; }
+  .chip-wall { -webkit-mask-image: none; mask-image: none; }
+  .chip-row { overflow-x: auto; }
 }
